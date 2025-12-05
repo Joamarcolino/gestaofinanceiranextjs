@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+body{
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  color: white;
+}
+table{
+  border: solid 1px;
+}
+table th{
+  border: solid 1px;
+  padding: 0.5rem;
+}
