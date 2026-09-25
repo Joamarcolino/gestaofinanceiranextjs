@@ -1,75 +1,35 @@
 'use client'
 
 import { useState } from "react"
+import Inputebuttons from "./components/inputebuttons"
+import Listaeconomica from "./components/listaeconomica"
+import { refresh } from "next/cache"
 
-export default function App() {
-  const [lancamentos, setLancamentos] = useState([])
-  const [valor, setValor] = useState(0) // Changed from undefined to 0
-  const [descricao, setDescricao] = useState("")
-  
-  function adicionarLancamento() {
-    // Better validation: check if description is not empty and value is valid
-    if (descricao.trim() && !isNaN(valor) && valor !== 0) {
-      setLancamentos([...lancamentos, {descricao, valor}])
-      setValor(0)
-      setDescricao("")
-    }
-  }
-  
-  const calcularSaldo = (index) => {
-    return lancamentos.slice(0, index + 1).reduce((sum, item) => sum + item.valor, 0)
-  }
-  
-  return (
-    <div className="p-4">
-      {/* Input form separated from table */}
-      <div className="mb-4 flex gap-2 justify-center">
-        <input 
-          value={valor} 
-          onChange={(e) => setValor(Number(e.target.value))} 
-          placeholder="100.0" 
-          className="border border-gray-300 text-black text-center px-2 py-1 rounded" 
-          type="number" 
-        />
-        <input 
-          value={descricao} 
-          onChange={(e) => setDescricao(e.target.value)} 
-          placeholder="Descrição" 
-          className="border border-gray-300 text-black text-center px-2 py-1 rounded" 
-          type="text" 
-        />
-        <button 
-          onClick={adicionarLancamento}
-          className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
-        >
-          Adicionar
-        </button>
-      </div>
+type LANCAMENTO = {
+  valor:number | string
+  descricao:string
+}
+export default function App(){
+  const[valor, setValor] = useState<number | string>("")
+  const[descricao, setDescricao] = useState("")
+  const[lancamento, setLancamento] = useState<LANCAMENTO>({valor, descricao})
+  const[lancamentos, setLancamentos] = useState<LANCAMENTO[]>([])
+  const[saldo, setSaldo] = useState(1000)
 
-      {/* Table with proper structure */}
-      <table className="w-full max-w-2xl mx-auto border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border border-gray-300 p-2">Descrição</th>
-            <th className="border border-gray-300 p-2">Valor</th>
-            <th className="border border-gray-300 p-2">Saldo atual</th>
-          </tr>
-        </thead>
-        <tbody>
-          {lancamentos.map((item, index) => (
-            <tr key={index} className="hover:bg-gray-50">
-              <td className="border border-gray-300 p-2">{item.descricao}</td>
-              <td className="border border-gray-300 p-2">{item.valor}</td>
-              <td className="border border-gray-300 p-2">{calcularSaldo(index)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      
-      {/* Show message when no entries */}
-      {lancamentos.length === 0 && (
-        <p className="text-center text-gray-500 mt-4">Nenhum lançamento cadastrado</p>
-      )}
-    </div>
+function add(){
+  if (!valor) return alert("Porfavor, não deixe o valor como nada.");
+  if (!descricao) return alert("Porfavor não deixe sem uma descrição.");
+    setLancamentos([...lancamentos, lancamento])
+}
+function deleter(index:number){
+ const lancamentoNovo = lancamentos.filter((_:any, i:number) => i !== index)
+  setLancamentos(lancamentoNovo)
+}
+
+  return(
+    <section>
+      <Inputebuttons deleter={deleter} lancamento={lancamento} add={add} valor={valor} descricao={descricao} setDescricao={setDescricao} setValor={setValor} setLancamento={setLancamentos} />
+      <Listaeconomica deleter={deleter} saldo={saldo} setSaldo={setSaldo}  lancamento={lancamento} lancamentos={lancamentos} valor={valor} descricao={descricao} setDescricao={setDescricao} setLancamento={setLancamentos} />
+    </section>
   )
 }
