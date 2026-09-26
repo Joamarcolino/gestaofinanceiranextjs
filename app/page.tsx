@@ -1,25 +1,24 @@
 'use client'
-
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import Inputebuttons from "./components/inputebuttons"
 import Listaeconomica from "./components/listaeconomica"
-import { refresh } from "next/cache"
-
-type LANCAMENTO = {
-  valor:number | string
-  descricao:string
-}
+import LANCAMENTO from './components/types'
 export default function App(){
+
   const[valor, setValor] = useState<number | string>("")
   const[descricao, setDescricao] = useState("")
-  const[lancamento, setLancamento] = useState<LANCAMENTO>({valor, descricao})
   const[lancamentos, setLancamentos] = useState<LANCAMENTO[]>([])
-  const[saldo, setSaldo] = useState(1000)
+  const[saldo] = useState(1000)
 
-function add(){
-  if (!valor) return alert("Porfavor, não deixe o valor como nada.");
+function add({valor, descricao}:LANCAMENTO){
+  if (!valor || Number.isNaN(Number(valor))) return alert("Porfavor, não deixe um valor inválido.");
   if (!descricao) return alert("Porfavor não deixe sem uma descrição.");
-    setLancamentos([...lancamentos, lancamento])
+
+  const lancamento: LANCAMENTO = ({valor:Number(valor), descricao:String(descricao)})
+
+  setLancamentos([...lancamentos, lancamento])
+  setValor("")
+  setDescricao("")
 }
 function deleter(index:number){
  const lancamentoNovo = lancamentos.filter((_:any, i:number) => i !== index)
@@ -27,9 +26,9 @@ function deleter(index:number){
 }
 
   return(
-    <section>
-      <Inputebuttons deleter={deleter} lancamento={lancamento} add={add} valor={valor} descricao={descricao} setDescricao={setDescricao} setValor={setValor} setLancamento={setLancamentos} />
-      <Listaeconomica deleter={deleter} saldo={saldo} setSaldo={setSaldo}  lancamento={lancamento} lancamentos={lancamentos} valor={valor} descricao={descricao} setDescricao={setDescricao} setLancamento={setLancamentos} />
+    <section className="flex justify-center text-center flex-col min-h-screen">
+      <Inputebuttons deleter={deleter}  add={add} valor={valor} descricao={descricao} setDescricao={setDescricao} setValor={setValor} setLancamento={setLancamentos} />
+      <Listaeconomica deleter={deleter} saldo={saldo}  lancamentos={lancamentos}/>
     </section>
   )
 }
