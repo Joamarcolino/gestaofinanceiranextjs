@@ -1,5 +1,5 @@
 'use client'
-import { useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import Inputebuttons from "./components/inputebuttons"
 import Listaeconomica from "./components/listaeconomica"
 import LANCAMENTO from './components/types'
@@ -9,7 +9,6 @@ export default function App(){
   const[descricao, setDescricao] = useState("")
   const[lancamentos, setLancamentos] = useState<LANCAMENTO[]>([])
   const[saldo] = useState(1000)
-
 function add({valor, descricao}:LANCAMENTO){
   if (!valor || Number.isNaN(Number(valor))) return alert("Porfavor, não deixe um valor inválido.");
   if (!descricao) return alert("Porfavor não deixe sem uma descrição.");
@@ -24,11 +23,10 @@ function deleter(index:number){
  const lancamentoNovo = lancamentos.filter((_:any, i:number) => i !== index)
   setLancamentos(lancamentoNovo)
 }
-
-  return(
-    <section className="flex justify-center text-center flex-col min-h-screen">
-      <Inputebuttons deleter={deleter}  add={add} valor={valor} descricao={descricao} setDescricao={setDescricao} setValor={setValor} setLancamento={setLancamentos} />
-      <Listaeconomica deleter={deleter} saldo={saldo}  lancamentos={lancamentos}/>
-    </section>
-  )
+return (
+  <section className="flex min-h-screen flex-col items-center gap-6 bg-[#212121] px-4 py-10 text-[#ececec]">
+    <Inputebuttons deleter={deleter} add={add} valor={valor} descricao={descricao} setDescricao={setDescricao} setValor={setValor} setLancamento={setLancamentos} />
+    <Listaeconomica deleter={deleter} saldo={saldo} lancamentos={lancamentos} />
+  </section>
+)
 }
